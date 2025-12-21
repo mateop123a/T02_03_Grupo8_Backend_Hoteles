@@ -15,11 +15,11 @@ El sistema expone servicios REST y cuenta con documentación mediante Swagger pa
 
 ## Tecnologías utilizadas
 
-- Lenguaje: Java / Python
-- Framework Backend: Spring Boot / FastAPI / Flask / Django DRF
-- Base de datos: MySQL / SQLite
-- Control de versiones: Git y GitHub
-- Documentación de servicios: Swagger
+- **Lenguaje de programación:** Python 3 v 3.14.1
+- **Framework backend:** Flask
+- **Tipo de aplicación:** API REST
+- **Documentación de servicios:** Swagger (Flask-Swagger / OpenAPI)
+- **Control de versiones:** Git y GitHub
 
 ---
 
