@@ -59,3 +59,4 @@ Esta estructura permite separar la lógica del negocio, el acceso a datos y la e
 ## Observaciones
 
 El desarrollo del proyecto se realizó de forma grupal utilizando GitHub para el control de versiones, con múltiples commits realizados por los integrantes del equipo.
+
