@@ -1,1 +1,2 @@
+from .hotel import Hotel
  
