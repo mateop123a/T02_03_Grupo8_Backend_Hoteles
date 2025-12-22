@@ -27,3 +27,9 @@ class ReservaService:
                                     habitacion["precio"])
         datos_reserva["total"] = total
         return self.reserva_repository.save(datos_reserva)
+    
+    def validar_disponibilidad(self, habitacion_id):
+        habitacion = self.habitacion_repository.obtener_por_id(habitacion_id)
+        if habitacion.get("estado") != "Disponible":
+            raise ValueError(f"La habitacion {habitacion_id} no esta disponible actualmente")
+        return True
