@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Entorno virtual
+.venv/
+venv/
+
+# Base de datos / Flask
+instance/
+*.sqlite3
+*.db
+migrations/__pycache__/
+
+# Editor / sistema
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Variables de entorno
+.env
