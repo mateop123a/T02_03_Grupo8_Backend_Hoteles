@@ -1,3 +1,4 @@
+# Commit de ajuste final para entrega
 from datetime import datetime, date
 import uuid
 from sqlalchemy import UniqueConstraint, CheckConstraint, Index
