@@ -1,0 +1,88 @@
+{% extends "_layout.html" %}
+{% set show_nav = true %}
+{% set title = "Habitaciones" %}
+
+{% block content %}
+<h3 class="mb-3">Habitaciones</h3>
+<div id="msg"></div>
+
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <h5>Nueva habitación</h5>
+    <div class="row g-2">
+      <div class="col-md-2"><input id="number" class="form-control" placeholder="Número"></div>
+      <div class="col-md-3"><input id="room_type" class="form-control" placeholder="Tipo (doble, suite...)"></div>
+      <div class="col-md-2"><input id="capacity" class="form-control" placeholder="Capacidad"></div>
+      <div class="col-md-3"><input id="price" class="form-control" placeholder="Precio/noche"></div>
+      <div class="col-md-2"><button class="btn btn-primary w-100" onclick="createRoom()">Guardar</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex gap-2 mb-2">
+  <select id="statusFilter" class="form-select" style="max-width:220px">
+    <option value="">Todas</option>
+    <option value="available">available</option>
+    <option value="occupied">occupied</option>
+    <option value="maintenance">maintenance</option>
+  </select>
+  <button class="btn btn-outline-secondary" onclick="loadRooms()">Filtrar</button>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <table class="table table-sm table-striped">
+      <thead><tr><th>ID</th><th>Número</th><th>Tipo</th><th>Cap.</th><th>Precio</th><th>Estado</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+requireAuth();
+
+async function loadRooms() {
+  try {
+    const status = document.getElementById("statusFilter").value;
+    const data = await apiFetch(`/rooms${status ? `?status=${encodeURIComponent(status)}` : ""}`);
+    const rows = document.getElementById("rows");
+    rows.innerHTML = "";
+    data.forEach(r => {
+      rows.innerHTML += `
+        <tr>
+          <td>${r.id}</td>
+          <td>${r.number}</td>
+          <td>${r.room_type}</td>
+          <td>${r.capacity}</td>
+          <td>${Number(r.price_per_night).toFixed(2)}</td>
+          <td>${r.status}</td>
+        </tr>`;
+    });
+  } catch (e) {
+    showMsg("msg", e.message, "danger");
+  }
+}
+
+async function createRoom() {
+  try {
+    const number = document.getElementById("number").value;
+    const room_type = document.getElementById("room_type").value;
+    const capacity = valPositiveNumber(document.getElementById("capacity").value, "Capacidad");
+    const price_per_night = valPositiveNumber(document.getElementById("price").value, "Precio/noche");
+
+    valRequired(number, "Número");
+    valRequired(room_type, "Tipo");
+
+    await apiFetch("/rooms", { method: "POST", body: { number, room_type, capacity, price_per_night, status: "available", is_active: true } });
+    showMsg("msg", "Habitación creada.", "success");
+    await loadRooms();
+  } catch (e) {
+    showMsg("msg", e.message, "danger");
+  }
+}
+
+loadRooms();
+</script>
+{% endblock %}

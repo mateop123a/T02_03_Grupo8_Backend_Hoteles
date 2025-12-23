@@ -1,0 +1,68 @@
+{% extends "_layout.html" %}
+{% set show_nav = true %}
+{% set title = "Reportes" %}
+
+{% block content %}
+<h3 class="mb-3">Reportes</h3>
+<div id="msg"></div>
+
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <h5>Habitaciones disponibles</h5>
+    <div class="row g-2">
+      <div class="col-md-4"><input id="ci" class="form-control" placeholder="check_in YYYY-MM-DD"></div>
+      <div class="col-md-4"><input id="co" class="form-control" placeholder="check_out YYYY-MM-DD"></div>
+      <div class="col-md-4"><button class="btn btn-outline-primary w-100" onclick="available()">Consultar</button></div>
+    </div>
+    <pre class="mt-3 bg-light p-2 rounded" id="availOut">[]</pre>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h5>Resumen financiero</h5>
+    <div class="row g-2">
+      <div class="col-md-4"><input id="start" class="form-control" placeholder="start YYYY-MM-DD"></div>
+      <div class="col-md-4"><input id="end" class="form-control" placeholder="end YYYY-MM-DD"></div>
+      <div class="col-md-4"><button class="btn btn-outline-primary w-100" onclick="finance()">Consultar</button></div>
+    </div>
+    <pre class="mt-3 bg-light p-2 rounded" id="finOut">{}</pre>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+requireAuth();
+
+async function available() {
+  try {
+    const check_in = document.getElementById("ci").value;
+    const check_out = document.getElementById("co").value;
+    valDateISO(check_in, "check_in");
+    valDateISO(check_out, "check_out");
+
+    const data = await apiFetch(`/reports/rooms/available?check_in=${check_in}&check_out=${check_out}`);
+    document.getElementById("availOut").innerText = JSON.stringify(data.rooms, null, 2);
+    showMsg("msg", "Consulta OK.", "success");
+  } catch (e) {
+    showMsg("msg", e.message, "danger");
+  }
+}
+
+async function finance() {
+  try {
+    const start = document.getElementById("start").value;
+    const end = document.getElementById("end").value;
+    valDateISO(start, "start");
+    valDateISO(end, "end");
+
+    const data = await apiFetch(`/reports/finance/summary?start=${start}&end=${end}`);
+    document.getElementById("finOut").innerText = JSON.stringify(data, null, 2);
+    showMsg("msg", "Consulta OK.", "success");
+  } catch (e) {
+    showMsg("msg", e.message, "danger");
+  }
+}
+</script>
+{% endblock %}

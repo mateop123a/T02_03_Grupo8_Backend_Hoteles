@@ -1,0 +1,99 @@
+{% extends "_layout.html" %}
+{% set show_nav = true %}
+{% set title = "Clientes" %}
+
+{% block content %}
+<h3 class="mb-3">Clientes</h3>
+<div id="msg"></div>
+
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <h5>Nuevo cliente</h5>
+    <div class="row g-2">
+      <div class="col-md-3"><input id="doc_id" class="form-control" placeholder="Documento"></div>
+      <div class="col-md-4"><input id="full_name" class="form-control" placeholder="Nombre completo"></div>
+      <div class="col-md-3"><input id="email" class="form-control" placeholder="Email (opcional)"></div>
+      <div class="col-md-2"><button class="btn btn-primary w-100" onclick="createClient()">Guardar</button></div>
+      <div class="col-md-3"><input id="phone" class="form-control" placeholder="Teléfono (opcional)"></div>
+      <div class="col-md-9"><input id="address" class="form-control" placeholder="Dirección (opcional)"></div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex gap-2 mb-2">
+  <input id="q" class="form-control" placeholder="Buscar por nombre o documento">
+  <button class="btn btn-outline-secondary" onclick="loadClients()">Buscar</button>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr>
+          <th>ID</th><th>Documento</th><th>Nombre</th><th>Email</th><th>Tel</th><th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+requireAuth();
+
+async function loadClients() {
+  try {
+    const q = document.getElementById("q").value.trim();
+    const data = await apiFetch(`/clients${q ? `?q=${encodeURIComponent(q)}` : ""}`);
+    const rows = document.getElementById("rows");
+    rows.innerHTML = "";
+    data.forEach(c => {
+      rows.innerHTML += `
+        <tr>
+          <td>${c.id}</td>
+          <td>${c.doc_id}</td>
+          <td>${c.full_name}</td>
+          <td>${c.email ?? ""}</td>
+          <td>${c.phone ?? ""}</td>
+          <td><button class="btn btn-sm btn-danger" onclick="deleteClient(${c.id})">Eliminar</button></td>
+        </tr>`;
+    });
+  } catch (e) {
+    showMsg("msg", e.message, "danger");
+  }
+}
+
+async function createClient() {
+  try {
+    const doc_id = document.getElementById("doc_id").value;
+    const full_name = document.getElementById("full_name").value;
+    const email = document.getElementById("email").value || null;
+    const phone = document.getElementById("phone").value || null;
+    const address = document.getElementById("address").value || null;
+
+    valRequired(doc_id, "Documento");
+    valRequired(full_name, "Nombre completo");
+
+    await apiFetch("/clients", { method: "POST", body: { doc_id, full_name, email, phone, address } });
+    showMsg("msg", "Cliente creado.", "success");
+    await loadClients();
+  } catch (e) {
+    showMsg("msg", e.message, "danger");
+  }
+}
+
+async function deleteClient(id) {
+  try {
+    await apiFetch(`/clients/${id}`, { method: "DELETE" });
+    showMsg("msg", "Cliente eliminado.", "warning");
+    await loadClients();
+  } catch (e) {
+    showMsg("msg", e.message, "danger");
+  }
+}
+
+loadClients();
+</script>
+{% endblock %}

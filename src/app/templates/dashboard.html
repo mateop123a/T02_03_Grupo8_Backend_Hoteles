@@ -1,0 +1,82 @@
+{% extends "_layout.html" %}
+{% set show_nav = true %}
+{% set title = "Dashboard" %}
+
+{% block content %}
+<h3 class="mb-3">Dashboard</h3>
+<div id="msg"></div>
+
+<div class="row g-3">
+  <div class="col-12 col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="small-muted">Ocupación (rango)</div>
+        <h4 id="occValue">--</h4>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="small-muted">Ingresos (rango)</div>
+        <h4 id="incomeValue">--</h4>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="small-muted">Egresos (rango)</div>
+        <h4 id="expenseValue">--</h4>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm mt-3">
+  <div class="card-body">
+    <h5>Rango de fechas</h5>
+    <div class="row g-2">
+      <div class="col-12 col-md-4">
+        <label class="form-label">Inicio</label>
+        <input id="start" class="form-control" placeholder="2026-01-01">
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label">Fin</label>
+        <input id="end" class="form-control" placeholder="2026-01-31">
+      </div>
+      <div class="col-12 col-md-4 d-flex align-items-end">
+        <button class="btn btn-primary w-100" onclick="loadDash()">Cargar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+requireAuth();
+
+async function loadDash() {
+  try {
+    const start = document.getElementById("start").value;
+    const end = document.getElementById("end").value;
+    valDateISO(start, "Inicio");
+    valDateISO(end, "Fin");
+
+    const occ = await apiFetch(`/reports/occupancy?start=${start}&end=${end}`);
+    document.getElementById("occValue").innerText = `${occ.occupancy_rate_percent}%`;
+
+    const fin = await apiFetch(`/reports/finance/summary?start=${start}&end=${end}`);
+    document.getElementById("incomeValue").innerText = fin.income.toFixed(2);
+    document.getElementById("expenseValue").innerText = fin.expenses.toFixed(2);
+
+    showMsg("msg", "Datos cargados.", "success");
+  } catch (e) {
+    showMsg("msg", e.message, "danger");
+  }
+}
+</script>
+{% endblock %}

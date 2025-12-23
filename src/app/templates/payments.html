@@ -1,0 +1,51 @@
+{% extends "_layout.html" %}
+{% set show_nav = true %}
+{% set title = "Pagos" %}
+
+{% block content %}
+<h3 class="mb-3">Pagos</h3>
+<div id="msg"></div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h5>Registrar pago</h5>
+    <div class="row g-2">
+      <div class="col-md-3"><input id="reservation_id" class="form-control" placeholder="reservation_id"></div>
+      <div class="col-md-3"><input id="amount" class="form-control" placeholder="monto"></div>
+      <div class="col-md-3">
+        <select id="method" class="form-select">
+          <option value="cash">cash</option>
+          <option value="card">card</option>
+          <option value="transfer">transfer</option>
+        </select>
+      </div>
+      <div class="col-md-3"><button class="btn btn-primary w-100" onclick="pay()">Pagar</button></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+requireAuth();
+
+async function pay() {
+  try {
+    const reservation_id = Number(document.getElementById("reservation_id").value);
+    const amount = valPositiveNumber(document.getElementById("amount").value, "Monto");
+    const method = document.getElementById("method").value;
+
+    if (!Number.isInteger(reservation_id) || reservation_id <= 0) throw new Error("reservation_id inválido.");
+
+    const data = await apiFetch("/payments", {
+      method: "POST",
+      body: { reservation_id, amount, method, reference: null }
+    });
+
+    showMsg("msg", `Pago registrado (id=${data.id}).`, "success");
+  } catch (e) {
+    showMsg("msg", e.message, "danger");
+  }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "_layout.html" %}
+{% set show_nav = true %}
+{% set title = "Reservas" %}
+
+{% block content %}
+<h3 class="mb-3">Reservas</h3>
+<div id="msg"></div>
+
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <h5>Nueva reserva</h5>
+    <div class="row g-2">
+      <div class="col-md-2"><input id="client_id" class="form-control" placeholder="client_id"></div>
+      <div class="col-md-2"><input id="room_id" class="form-control" placeholder="room_id"></div>
+      <div class="col-md-3"><input id="check_in" class="form-control" placeholder="check_in YYYY-MM-DD"></div>
+      <div class="col-md-3"><input id="check_out" class="form-control" placeholder="check_out YYYY-MM-DD"></div>
+      <div class="col-md-2"><button class="btn btn-primary w-100" onclick="createRes()">Crear</button></div>
+    </div>
+    <div class="small-muted mt-2">Tip: usa Clientes/Habitaciones para ver IDs.</div>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr>
+          <th>ID</th><th>Código</th><th>Cliente</th><th>Habitación</th><th>Fechas</th><th>Estado</th><th>Total</th><th>Pagado</th><th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+requireAuth();
+
+async function loadRes() {
+  try {
+    const data = await apiFetch("/reservations");
+    const rows = document.getElementById("rows");
+    rows.innerHTML = "";
+    data.forEach(r => {
+      rows.innerHTML += `
+        <tr>
+          <td>${r.id}</td>
+          <td>${r.code}</td>
+          <td>${r.client_id}</td>
+          <td>${r.room_id}</td>
+          <td>${r.check_in} → ${r.check_out}</td>
+          <td>${r.status}</td>
+          <td>${Number(r.total_amount).toFixed(2)}</td>
+          <td>${Number(r.paid_amount).toFixed(2)}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="cancelRes(${r.id})">Cancelar</button>
+          </td>
+        </tr>`;
+    });
+  } catch (e) {
+    showMsg("msg", e.message, "danger");
+  }
+}
+
+async function createRes() {
+  try {
+    const client_id = Number(document.getElementById("client_id").value);
+    const room_id = Number(document.getElementById("room_id").value);
+    const check_in = document.getElementById("check_in").value;
+    const check_out = document.getElementById("check_out").value;
+
+    if (!Number.isInteger(client_id) || client_id <= 0) throw new Error("client_id inválido.");
+    if (!Number.isInteger(room_id) || room_id <= 0) throw new Error("room_id inválido.");
+    valDateISO(check_in, "check_in");
+    valDateISO(check_out, "check_out");
+
+    await apiFetch("/reservations", { method: "POST", body: { client_id, room_id, check_in, check_out }});
+    showMsg("msg", "Reserva creada.", "success");
+    await loadRes();
+  } catch (e) {
+    showMsg("msg", e.message, "danger");
+  }
+}
+
+async function cancelRes(id) {
+  try {
+    await apiFetch(`/reservations/${id}/cancel`, { method: "PUT" });
+    showMsg("msg", "Reserva cancelada.", "warning");
+    await loadRes();
+  } catch (e) {
+    showMsg("msg", e.message, "danger");
+  }
+}
+
+loadRes();
+</script>
+{% endblock %}
