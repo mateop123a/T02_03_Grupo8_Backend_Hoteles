@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 from main import app
-
+#
 BASE = "/hotels"
 PATCH_TARGET = "hotel_controller.hotel_service"
 
