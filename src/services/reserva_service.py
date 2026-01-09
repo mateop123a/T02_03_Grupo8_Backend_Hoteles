@@ -32,7 +32,7 @@ class ReservaService:
         )
 
         if not habitacion:
-            raise ValueError("La habitación no existe")
+            raise ValueError("La habitación no se encuentra disponible para reserva")
 
         self._validar_disponibilidad(habitacion)
 
