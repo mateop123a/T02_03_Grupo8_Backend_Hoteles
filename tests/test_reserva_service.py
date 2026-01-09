@@ -14,7 +14,9 @@ class FakeHabitacionRepository:
                 "estado" : "Disponible"
             }
         return None
-
+# ==========================
+# Test de reserva correcta
+# ==========================
 def test_reserva_correcta():
     service = ReservaService(FakeReservaRepository(), FakeHabitacionRepository())
     data = {
