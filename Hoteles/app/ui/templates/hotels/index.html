@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<section class="card">
+  <h2>Hoteles disponibles</h2>
+  <p id="msg" class="muted"></p>
+
+  <div id="cards" class="grid"></div>
+</section>
+
+<script>
+  window.API_HOTELS = "/api/hotels";
+</script>
+<script src="{{ url_for('ui.static', filename='js/hotels.js') }}"></script>
+
+{% endblock %}

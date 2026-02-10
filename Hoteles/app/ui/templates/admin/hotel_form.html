@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<section class="card">
+  <div class="row" style="justify-content: space-between;">
+    <div>
+      <h2 style="margin:0">{{ "Crear hotel" if mode == "create" else "Editar hotel" }}</h2>
+      <p class="muted" style="margin-top:6px">Solo administrador</p>
+    </div>
+    <div class="row">
+      <a class="btn btn--ghost" href="/admin">Volver al panel</a>
+      <a class="btn btn--ghost" href="/admin/logout">Salir</a>
+    </div>
+  </div>
+
+  <form id="hotelForm" class="form" style="margin-top:14px">
+    <label class="label">Nombre
+      <input id="name" class="input" required placeholder="Ej: Hotel Andes Suites"/>
+    </label>
+
+    <label class="label">Ciudad
+      <input id="city" class="input" required placeholder="Ej: Quito"/>
+    </label>
+
+    <label class="label">Estrellas
+      <input id="stars" class="input" type="number" min="1" max="5" required placeholder="1 - 5"/>
+    </label>
+
+    <label class="label">Precio por persona / noche (USD)
+    <input
+        id="price_per_person_night"
+        class="input"
+        type="number"
+        step="0.01"
+        min="0.01"
+        required
+        placeholder="Ej: 25.00"
+    >
+    </label>
+
+    <p id="error" class="error"></p>
+
+    <div class="row">
+      <button class="btn btn--primary" type="submit">{{ "Crear" if mode == "create" else "Guardar" }}</button>
+      <a class="btn btn--ghost" href="/admin">Cancelar</a>
+    </div>
+  </form>
+</section>
+
+<script>
+  window.API_BASE = "/api/hotels";
+  window.MODE = "{{ mode }}";
+  window.HOTEL_ID = "{{ hotel_id }}";
+</script>
+<script src="{{ url_for('ui.static', filename='js/admin_hotel_form.js') }}"></script>
+
+<label class="label">
+  Imagen del hotel (URL)
+  <input class="input" id="image_url" placeholder="https://..." required>
+</label>
+
+{% endblock %}

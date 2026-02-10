@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<section class="card">
+  <div class="row" style="justify-content: space-between; align-items:center; gap:10px;">
+    <div>
+      <h2>Comprobante de reserva</h2>
+      <p class="muted">Puedes imprimir o descargar este comprobante.</p>
+    </div>
+
+    <div class="row" style="gap:10px;">
+      <button class="btn btn--ghost" onclick="window.print()">🖨️ Imprimir</button>
+      <a class="btn btn--primary" href="/reservation/{{ r.id }}/pdf">⬇️ Descargar PDF</a>
+    </div>
+  </div>
+
+  <div class="tableWrap" style="margin-top:14px;">
+    <table class="table">
+      <tbody>
+        <tr><th>ID Reserva</th><td class="mono">{{ r.id }}</td></tr>
+        <tr><th>Hotel</th><td><strong>{{ hotel.name }}</strong> — {{ hotel.city }}</td></tr>
+        <tr><th>Cliente</th><td>{{ r.full_name }} ({{ r.email }})</td></tr>
+        <tr><th>Fechas</th><td>{{ r.check_in }} → {{ r.check_out }} ({{ r.nights }} noches)</td></tr>
+        <tr><th>Huéspedes</th><td>{{ r.guests }}</td></tr>
+        <tr><th>Precio</th><td>{{ r.price_per_person_night }} / persona·noche</td></tr>
+        <tr><th>Total pagado</th><td><strong>{{ r.total_paid }}</strong></td></tr>
+        <tr><th>Forma de pago</th><td>{{ r.payment_method }}</td></tr>
+        <tr><th>Estado</th><td>{{ r.payment_status }}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="row" style="margin-top:12px;">
+    <a class="btn btn--ghost" href="/my-reservations">Volver a mis reservas</a>
+    <a class="btn btn--ghost" href="/">Hoteles</a>
+  </div>
+</section>
+
+{% endblock %}

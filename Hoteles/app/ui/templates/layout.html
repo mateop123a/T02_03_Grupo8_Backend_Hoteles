@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{{ title or "Hotel Manager" }}</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="{{ url_for('ui.static', filename='css/app.css') }}">
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <header class="nav">
+    <div class="nav__inner">
+      <a class="brand" href="/">
+        <span class="brand__logo">🏨</span>
+        <span class="brand__name">Hotel Manager</span>
+      </a>
+
+      <nav class="nav__links">
+        <!-- Público -->
+        <a class="nav__link" href="/">Hoteles</a>
+
+        <!-- Reservas (usuario) -->
+        {% if session.get("user_email") %}
+          <a class="nav__link" href="/my-reservations">Reservas</a>
+        {% else %}
+          <a class="nav__link" href="/login">Reservas</a>
+          <a class
+        {% endif %}
+
+        <!-- Admin -->
+        {% if session.get("is_admin") %}
+          <a class="nav__link nav__cta" href="/admin">Panel Admin</a>
+          <a class="nav__link" href="/admin/logout">Salir</a>
+        {% else %}
+          <a class="nav__link nav__cta" href="/admin/login">Admin</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTENIDO -->
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <span>© {{ 2026 }} Hotel Manager</span>
+    </div>
+  </footer>
+</body>
+</html>

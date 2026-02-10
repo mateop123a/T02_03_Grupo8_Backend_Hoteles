@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<section class="card">
+  <!-- HEADER CON BOTÓN SALIR -->
+  <div class="row" style="justify-content: space-between; align-items:center;">
+    <div>
+      <h2>Mis reservas</h2>
+      <p class="muted">Reservas asociadas a tu email.</p>
+    </div>
+  </div>
+
+  <p id="msg" class="muted">Cargando...</p>
+  <div id="myRes"></div>
+
+  <div class="row" style="margin-top:12px;">
+    <a class="btn btn--ghost" href="/">Volver a hoteles</a>
+    <a class="btn btn--ghost" href="/logout">Salir</a>
+  </div>
+</section>
+
+<script>
+  window.API_MY_RES = "/api/my-reservations";
+  window.API_HOTELS = "/api/hotels";
+</script>
+<script src="{{ url_for('ui.static', filename='js/my_reservations.js') }}"></script>
+
+{% endblock %}

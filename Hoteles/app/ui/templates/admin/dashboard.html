@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="panel">
+  <div class="panel__head">
+    <h2 class="panel__title">Panel Administrador</h2>
+    <div class="row">
+      <a class="btn btn--primary" href="/hotels/new">+ Nuevo hotel</a>
+    </div>
+  </div>
+
+  <div class="grid" style="grid-template-columns: 1fr;">
+    <div class="card">
+      <h3>Hoteles</h3>
+      <p id="adminMsg" class="muted"></p>
+      <div id="adminCards" class="grid"></div>
+    </div>
+
+    <div class="card">
+      <h3>Reservas</h3>
+      <p id="resMsg" class="muted"></p>
+      <div id="reservations"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  window.API_HOTELS = "/api/hotels";
+  window.API_RESERVATIONS = "/api/reservations";
+</script>
+<script src="{{ url_for('ui.static', filename='js/admin.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="card">
+  <h2>Crear cuenta</h2>
+  <p class="muted">Regístrate para guardar y ver tus reservas.</p>
+
+  <form class="form" method="post" action="/register">
+    <label class="label">Email
+      <input class="input" name="email" type="email" required>
+    </label>
+    <label class="label">Contraseña
+      <input class="input" name="password" type="password" required>
+    </label>
+
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+
+    <input type="hidden" name="next" value="{{ next or '/my-reservations' }}">
+
+    <div class="row">
+      <button class="btn btn--primary" type="submit">Crear cuenta</button>
+      <a class="btn btn--ghost" href="/login?next={{ next or '/my-reservations' }}">Ya tengo cuenta</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

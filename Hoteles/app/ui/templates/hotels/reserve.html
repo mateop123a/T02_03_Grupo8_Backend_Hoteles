@@ -1,0 +1,144 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<!-- HEADER HOTEL -->
+<section id="hotelHeader" class="card" style="margin-bottom: 14px;">
+  <div class="row" style="justify-content: space-between; align-items: flex-start;">
+    <div>
+      <div class="pill">HOTEL</div>
+      <h2 id="hotelTitle" style="margin:10px 0 6px;">Cargando hotel...</h2>
+      <p id="hotelMeta" class="muted" style="margin:0;"></p>
+    </div>
+
+    <div style="text-align:right;">
+      <div class="badge badge--info" id="hotelPrice">💵 — / persona·noche</div>
+      <div class="muted" style="font-size:12px; margin-top:8px;">Precio referencial</div>
+    </div>
+  </div>
+</section>
+
+<!-- FORM -->
+<section class="card">
+  <h2>Reservar</h2>
+  <p class="muted">Completa tus datos, fechas y método de pago.</p>
+
+  <form id="reserveForm" class="form">
+    <input type="hidden" id="hotel_id" value="{{ hotel_id }}"/>
+
+    <label class="label">Nombre completo
+      <input class="input" id="full_name" required>
+    </label>
+
+    <label class="label">Email
+      <input class="input" id="email" type="email" value="{{ user_email }}" readonly>
+    </label>
+
+    <div class="row">
+      <label class="label" style="flex:1">Check-in
+        <input class="input" id="check_in" type="date" required>
+      </label>
+      <label class="label" style="flex:1">Check-out
+        <input class="input" id="check_out" type="date" required>
+      </label>
+    </div>
+
+    <label class="label">Huéspedes
+      <input class="input" id="guests" type="number" min="1" value="1" required>
+    </label>
+
+    <!-- MÉTODO DE PAGO -->
+    <label class="label">Forma de pago
+      <select class="input" id="payment_method" required>
+        <option value="">Selecciona…</option>
+        <option value="card">💳 Tarjeta</option>
+        <option value="transfer">🏦 Transferencia</option>
+        <option value="cash">💵 Efectivo</option>
+      </select>
+    </label>
+
+    <!-- ✅ TARJETA -->
+    <div id="cardBox" class="payBox" style="display:none;">
+      <div class="row" style="justify-content:space-between; align-items:center;">
+        <strong>💳 Datos de tarjeta</strong>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <label class="label" style="flex:1">Nombre en la tarjeta
+          <input class="input" id="card_name" placeholder="Ej: Bryan Raza">
+        </label>
+      </div>
+
+      <div class="row">
+        <label class="label" style="flex:2">Número
+          <input class="input" id="card_number" inputmode="numeric" placeholder="1234 5678 9012 3456" maxlength="19">
+        </label>
+
+        <label class="label" style="flex:1">Vence (MM/AA)
+          <input class="input" id="card_exp" inputmode="numeric" placeholder="02/28" maxlength="5">
+        </label>
+
+        <label class="label" style="flex:1">CVV
+          <input class="input" id="card_cvv" inputmode="numeric" placeholder="123" maxlength="4">
+        </label>
+      </div>
+    </div>
+
+    <!-- ✅ TRANSFERENCIA -->
+    <div id="transferBox" class="payBox" style="display:none;">
+      <strong>🏦 Transferencia / Depósito</strong>
+      <p class="muted" style="margin:6px 0 12px;">
+        Realiza la transferencia y conserva el comprobante.
+      </p>
+
+      <div class="row" style="gap:12px; align-items:flex-start;">
+        <div style="flex:2;">
+          <div class="tableWrap">
+            <table class="table">
+              <tbody>
+                <tr><th>Banco</th><td>Banco Pichincha</td></tr>
+                <tr><th>Titular</th><td>Hotel Manager S.A.</td></tr>
+                <tr><th>Cuenta</th><td class="mono">1234567890</td></tr>
+                <tr><th>Tipo</th><td>Ahorros</td></tr>
+                <tr><th>Referencia</th><td class="mono">RESERVA + tu email</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="flex:1; text-align:center;">
+          <div class="badge badge--info" style="display:inline-block; margin-bottom:8px;">QR</div><br>
+          <img
+            src="{{ url_for('ui.static', filename='img/qr-transfer.png') }}"
+            alt="QR transferencia"
+            style="width:180px; max-width:100%; border-radius:14px; border:1px solid rgba(255,255,255,0.12);"
+          >
+          <p class="muted" style="font-size:12px; margin-top:8px;">Escanea para pagar</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ EFECTIVO -->
+    <div id="cashBox" class="payBox" style="display:none;">
+      <strong>💵 Pago en efectivo</strong>
+      <p class="muted" style="margin:6px 0 0;">
+        Paga al llegar al hotel en recepción. Te recomendamos llegar con un documento de identidad.
+      </p>
+    </div>
+
+    <p id="error" class="error"></p>
+    <p id="ok" class="muted"></p>
+
+    <div class="row">
+      <button class="btn btn--primary" type="submit">Confirmar reserva</button>
+      <a class="btn btn--ghost" href="/">Volver</a>
+    </div>
+  </form>
+</section>
+
+<script>
+  window.API_RESERVATIONS = "/api/reservations";
+  window.API_HOTELS = "/api/hotels";
+</script>
+<script src="{{ url_for('ui.static', filename='js/hotels.js') }}"></script>
+
+{% endblock %}
